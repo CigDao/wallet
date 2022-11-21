@@ -47,6 +47,10 @@ actor {
         memberEntries := [];
     };
 
+    public query func fetchMembers(): async [(Principal,Member)] {
+      Iter.toArray(members.entries());
+    };
+
     public shared({caller}) func updateMemberOwner(value:Principal): async Result.Result<(),ApiError> {
       let exist = members.get(caller);
       switch(exist){
@@ -130,4 +134,39 @@ actor {
     private func _transfer(to:Principal, amount:Nat): async TokenService.TxReceipt {
       await TokenService.transfer(to, amount);
     };
+
+    private func _setup() {
+      let allocation1 = 3000000000000000000;
+      let allocation2 = 1000000000000000000;
+
+      let allidoizcode_principal = Principal.fromText(Constants.allidoizcode);
+      let cryptoisgood_principal = Principal.fromText(Constants.cryptoisgood);
+      let remco_principal = Principal.fromText(Constants.remco);
+      let cajun_principal = Principal.fromText(Constants.cajun);
+      let notdom_principal = Principal.fromText(Constants.notdom);
+
+      let allidoizcode = _createMember(allocation1, allidoizcode_principal);
+      let cryptoisgood = _createMember(allocation1, cryptoisgood_principal);
+      let remco = _createMember(allocation2, remco_principal);
+      let cajun = _createMember(allocation2, cajun_principal);
+      let notdom = _createMember(allocation2, notdom_principal);
+
+      members.put(allidoizcode_principal,allidoizcode);
+      members.put(cryptoisgood_principal,cryptoisgood);
+      members.put(remco_principal,remco);
+      members.put(cajun_principal,cajun);
+      members.put(notdom_principal,notdom);
+    };
+
+    private func _createMember(allocation:Nat, owner:Principal): Member {
+      {
+        owner = owner;
+        allocation = allocation;
+        claimAmount = allocation / Utils.textToNat(Int.toText(maxClaims));
+        lastClaim = Time.now();
+        claimCount = 0;
+        payout = 0;
+      };
+    };
+    _setup();
 };

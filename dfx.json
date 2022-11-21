@@ -1,21 +1,8 @@
 {
   "canisters": {
-    "wallet_backend": {
-      "main": "src/wallet_backend/main.mo",
+    "wallet": {
+      "main": "src/wallet/main.mo",
       "type": "motoko"
-    },
-    "wallet_frontend": {
-      "dependencies": [
-        "wallet_backend"
-      ],
-      "frontend": {
-        "entrypoint": "src/wallet_frontend/src/index.html"
-      },
-      "source": [
-        "src/wallet_frontend/assets",
-        "dist/wallet_frontend/"
-      ],
-      "type": "assets"
     }
   },
   "defaults": {
