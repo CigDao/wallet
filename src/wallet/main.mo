@@ -28,7 +28,8 @@ actor {
     private type ApiError = Response.ApiError;
 
     private stable let startDate = Time.now();
-    private stable let day:Int = 86400000000000;
+    //private stable let day:Int = 86400000000000;
+    private stable let day:Int = 60000000000;
     private stable let month:Int = day * 30;
     private stable let year:Int = month * 12;
     private stable let maxClaims:Int = 36;
@@ -95,6 +96,7 @@ actor {
       let exist = members.get(caller);
       switch(exist){
         case(?exist){
+          assert(exist.claimCount < maxClaims);
           assert(exist.lastClaim < now);
           let claimTime = now - exist.lastClaim;
           if(claimTime >= month) {
