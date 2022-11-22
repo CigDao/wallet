@@ -28,10 +28,15 @@ actor {
     private type ApiError = Response.ApiError;
 
     private stable let startDate = Time.now();
-    //private stable let day:Int = 86400000000000;
-    private stable let day:Int = 60000000000;
+    
+    /*private stable let day:Int = 86400000000000;
     private stable let month:Int = day * 30;
     private stable let year:Int = month * 12;
+    private stable let maxClaims:Int = 36;*/
+
+    private stable let day:Int = 60000000000;
+    private stable let month:Int = day * 5;
+    private stable let year:Int = month * 3;
     private stable let maxClaims:Int = 36;
 
     private stable let clif = year; // 12 month clif until vesting starts
@@ -48,8 +53,31 @@ actor {
         memberEntries := [];
     };
 
+    public query func timeLeft(): async Int {
+      let now = Time.now();
+      let vestedTime = startDate + year;
+      if(vestedTime > now){
+        (vestedTime - now) / day
+      }else {
+        0
+      }
+    };
+
+
     public query func fetchMembers(): async [(Principal,Member)] {
       Iter.toArray(members.entries());
+    };
+
+    public query func getMember(value:Principal): async ?Member {
+      let exist = members.get(value);
+      switch(exist){
+        case(?exist){
+          ?exist
+        };
+        case(null){
+          null
+        };
+      };
     };
 
     public shared({caller}) func updateMemberOwner(value:Principal): async Result.Result<(),ApiError> {
